@@ -1,14 +1,19 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
-import jm.task.core.jdbc.util.Util;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jm.task.core.jdbc.util.Util.getConnection;
 
-public class UserDaoJDBCImpl extends Util implements UserDao {
+
+public class UserDaoJDBCImpl implements UserDao {
 
     private final Connection connection = getConnection();
 
@@ -17,7 +22,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
     }
 
     public void createUsersTable() {
-        String sql = "CREATE TABLE USER (Id INT AUTO_INCREMENT PRIMARY KEY, " +
+        String sql = "CREATE TABLE IF NOT EXISTS USER (Id INT AUTO_INCREMENT PRIMARY KEY, " +
                 "name VARCHAR(40), " +
                 "lastname VARCHAR(40), " +
                 "age TINYINT)";
@@ -26,18 +31,18 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
             preparedStatement.executeUpdate();
             System.out.println("Table created!");
         } catch (SQLException e) {
-           System.err.println("Creation ERROR!");
+            e.printStackTrace();
         }
     }
 
     public void dropUsersTable() {
-        String sql = "DROP TABLE USER";
+        String sql = "DROP TABLE IF EXISTS USER";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.executeUpdate();
             System.out.println("Table delete!");
         } catch (SQLException e) {
-            System.err.println("Table doesn't exist, nothing to delete!");
+            e.printStackTrace();
         }
     }
 
@@ -55,6 +60,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
             System.out.println("User с именем - " + name + " добавлен в базу данных!");
         } catch (SQLException e) {
             System.err.println("Adding error!");
+            e.printStackTrace();
         }
     }
 
@@ -69,6 +75,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
             System.out.println("User at id: " + id + " was deleted!");
         } catch (SQLException e) {
             System.err.println("Error at deleting. Incorrect id!");
+            e.printStackTrace();
         }
     }
 
@@ -93,6 +100,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
             System.out.println(userList);
         } catch (SQLException e) {
             System.err.println("Getting error!");
+            e.printStackTrace();
         }
         return userList;
     }
@@ -108,6 +116,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
 
         } catch (SQLException e) {
             System.err.println("Cleaning Error!");
+            e.printStackTrace();
         }
     }
 }
